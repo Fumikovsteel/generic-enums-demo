@@ -7,6 +7,10 @@ import pl.wk.demo.generics.event.domain.CreateRoleEvent;
 import pl.wk.demo.generics.event.domain.CreateUserEvent;
 import pl.wk.demo.generics.event.domain.DomainEvent;
 import pl.wk.demo.generics.event.domain.UpdateUserEvent;
+import pl.wk.demo.generics.event.factory.EventFactory;
+import pl.wk.demo.generics.event.factory.domain.CreateRoleEventFactory;
+import pl.wk.demo.generics.event.factory.domain.CreateUserEventFactory;
+import pl.wk.demo.generics.event.factory.domain.UpdateUserEventFactory;
 
 import java.util.Map;
 import java.util.Objects;
@@ -22,11 +26,11 @@ import java.util.stream.Stream;
  */
 @Value(staticConstructor = "of")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class EventType<T extends DomainEvent> {
+public class EventType<E extends DomainEvent, T extends EventFactory<E>> {
 
-    public static EventType<CreateUserEvent> CREATE_USER = new EventType<>("CREATE_USER", CreateUserEvent.class);
-    public static EventType<UpdateUserEvent> UPDATE_USER = new EventType<>("UPDATE_USER", UpdateUserEvent.class);
-    public static EventType<CreateRoleEvent> CREATE_ROLE = new EventType<>("CREATE_ROLE", CreateRoleEvent.class);
+    public static EventType<CreateUserEvent, CreateUserEventFactory> CREATE_USER = new EventType<>("CREATE_USER", CreateUserEventFactory.class);
+    public static EventType<UpdateUserEvent, UpdateUserEventFactory> UPDATE_USER = new EventType<>("UPDATE_USER", UpdateUserEventFactory.class);
+    public static EventType<CreateRoleEvent, CreateRoleEventFactory> CREATE_ROLE = new EventType<>("CREATE_ROLE", CreateRoleEventFactory.class);
 
     private static Map<String, EventType> EVENTS;
 
@@ -51,9 +55,9 @@ public class EventType<T extends DomainEvent> {
     }
 
     private final String key;
-    private final Class<T> eventClass;
+    private final Class<T> eventFactoryClass;
 
-    public static Optional<EventType<?>> of(String key) {
+    public static Optional<EventType<?, ?>> of(String key) {
         return Optional.ofNullable(EVENTS.get(key));
     }
 }
